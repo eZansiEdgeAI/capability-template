@@ -24,7 +24,7 @@ Click the **"Use this template"** button on GitHub to create your new capability
 
 ### 2. Customize the Capability Contract
 
-Edit `capability.json` and replace all `{{PLACEHOLDERS}}`:
+Edit `capability.json` and replace the template values:
 
 ```json
 {
@@ -48,11 +48,11 @@ Edit `capability.json` and replace all `{{PLACEHOLDERS}}`:
 
 ### 3. Update Configuration Files
 
-Replace placeholders in the `podman-compose.yml` files with your values:
-- `{{CAPABILITY_NAME}}` → Your capability name
-- `{{CONTAINER_IMAGE}}` → Your container image
-- `{{PORT}}` → Your service port
-- `{{HEALTH_PATH}}` → Your health endpoint path
+Replace template values in the `podman-compose.yml` files:
+- `my-capability` → Your capability name
+- `myregistry/mycapability:latest` → Your container image
+- `8080` → Your service port
+- `/health` → Your health endpoint path
 
 ### 4. Deploy
 

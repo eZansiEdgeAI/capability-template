@@ -11,29 +11,33 @@
   ],
   "supported_architectures": ["arm64", "amd64"],
   "resources": {
-    "ram_mb": {{RAM_MB}},
-    "cpu_cores": {{CPU_CORES}},
-    "storage_mb": {{STORAGE_MB}},
-    "accelerator": "none"
+    "ram_mb": 4096,
+    "cpu_cores": 2,
+    "storage_mb": 10240,
+    "accelerator": "none",
+    "_comment": "Example values: ram_mb=4096 (4GB), cpu_cores=2, storage_mb=10240 (10GB)"
   },
   "endpoints": {
     "health": {
       "method": "GET",
-      "path": "{{HEALTH_PATH}}",
+      "path": "/health",
       "input": "none",
-      "output": "application/json"
+      "output": "application/json",
+      "_comment": "Example: path=/health for simple health check"
     },
     "main": {
       "method": "POST",
-      "path": "{{MAIN_ENDPOINT_PATH}}",
+      "path": "/api/process",
       "input": "application/json",
-      "output": "application/json"
+      "output": "application/json",
+      "_comment": "Example: path=/api/process for main capability endpoint"
     }
   },
   "container": {
     "image": "{{CONTAINER_IMAGE}}",
-    "port": {{PORT}},
-    "restart_policy": "unless-stopped"
+    "port": 8080,
+    "restart_policy": "unless-stopped",
+    "_comment": "Example: image=myregistry/mycapability:latest, port=8080"
   },
-  "notes": "Replace all {{PLACEHOLDERS}} with actual values for your capability"
+  "notes": "This is a TEMPLATE with example values. Replace {{CAPABILITY_NAME}}, {{CAPABILITY_DESCRIPTION}}, {{SERVICE_TYPE}}, {{CONTAINER_IMAGE}}, and adjust numeric values as needed for your capability."
 }

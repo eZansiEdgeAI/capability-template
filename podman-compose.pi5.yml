@@ -1,15 +1,21 @@
 version: '3.8'
 
 # Optimized for Raspberry Pi 5 (16GB RAM)
+#
+# TEMPLATE: Replace the following placeholders:
+#   - my-capability -> your capability name
+#   - myregistry/mycapability:latest -> your container image
+#   - 8080 -> your service port
+#   - /health -> your health endpoint path
 
 services:
-  {{CAPABILITY_NAME}}:
-    image: {{CONTAINER_IMAGE}}
-    container_name: {{CAPABILITY_NAME}}-capability
+  my-capability:
+    image: myregistry/mycapability:latest
+    container_name: my-capability-capability
     ports:
-      - "{{PORT}}:{{PORT}}"
+      - "8080:8080"
     volumes:
-      - {{CAPABILITY_NAME}}-data:/data
+      - my-capability-data:/data
     deploy:
       resources:
         limits:
@@ -19,7 +25,7 @@ services:
           memory: 8g
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:{{PORT}}{{HEALTH_PATH}}"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -28,5 +34,5 @@ services:
       # Pi 5 can handle more parallel processing
 
 volumes:
-  {{CAPABILITY_NAME}}-data:
+  my-capability-data:
     driver: local

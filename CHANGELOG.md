@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Container-first** - All capabilities run in containers
 - **Edge-optimized** - Efficient resource usage for ARM64
 - **Generic by design** - No capability-specific logic in template
-- **Placeholder-based** - Easy customization with find/replace
+- **Example-based templates** - Clear example values that are easy to customize (valid YAML/JSON)
 
 ### Template Features
 - ✅ Multi-architecture support (ARM64 + AMD64)
@@ -75,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Generic testing framework
 - ✅ Comprehensive documentation
 - ✅ All scripts executable
-- ✅ No hardcoded values (all use placeholders)
+- ✅ Valid YAML/JSON with clear example values
 - ✅ Works for ANY capability type (LLM, STT, TTS, Vision, etc.)
 
 ### Breaking Changes
@@ -90,17 +90,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 When using this template to create a new capability:
 
-1. **Replace placeholders** in all files:
-   - `{{CAPABILITY_NAME}}` → Your capability name
-   - `{{CAPABILITY_DESCRIPTION}}` → Description
-   - `{{SERVICE_TYPE}}` → Service type (llm, stt, tts, etc.)
-   - `{{CONTAINER_IMAGE}}` → Your container image
-   - `{{PORT}}` → Your service port
-   - `{{HEALTH_PATH}}` → Health endpoint path
-   - `{{MAIN_ENDPOINT_PATH}}` → Main endpoint path
-   - `{{RAM_MB}}` → Required RAM in MB
-   - `{{CPU_CORES}}` → Required CPU cores
-   - `{{STORAGE_MB}}` → Required storage in MB
+1. **Replace example values** in all files:
+   - `my-capability` → Your capability name
+   - `My awesome capability...` → Your description
+   - `custom-service` → Service type (llm, stt, tts, etc.)
+   - `myregistry/mycapability:latest` → Your container image
+   - `8080` → Your service port
+   - `/health` → Health endpoint path
+   - `/api/process` → Main endpoint path
+   - `4096` → Required RAM in MB (adjust as needed)
+   - `2` → Required CPU cores (adjust as needed)
+   - `10240` → Required storage in MB (adjust as needed)
 
 2. **Update this CHANGELOG** with your capability-specific changes
 
