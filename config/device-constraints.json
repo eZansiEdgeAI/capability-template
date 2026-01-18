@@ -1,0 +1,100 @@
+{
+  "device_constraints": {
+    "raspberry_pi_4_8gb": {
+      "architecture": "arm64",
+      "ram_total_gb": 8,
+      "ram_available_gb": 5,
+      "cpu_cores": 4,
+      "cpu_architecture": "ARM Cortex-A72",
+      "recommended_memory_limit_gb": 5,
+      "recommended_cpu_limit": 4,
+      "recommended_memory_reservation_gb": 3,
+      "use_cases": [
+        "Development and testing",
+        "Small-scale inference",
+        "Edge deployment"
+      ],
+      "notes": "Conservative allocation; leave headroom for OS"
+    },
+    "raspberry_pi_5_16gb": {
+      "architecture": "arm64",
+      "ram_total_gb": 16,
+      "ram_available_gb": 12,
+      "cpu_cores": 4,
+      "cpu_architecture": "ARM Cortex-A76",
+      "recommended_memory_limit_gb": 12,
+      "recommended_cpu_limit": 4,
+      "recommended_memory_reservation_gb": 8,
+      "use_cases": [
+        "Production-ready edge deployment",
+        "Medium-scale inference",
+        "Multi-capability hosting"
+      ],
+      "notes": "Improved performance over Pi 4; can handle larger workloads"
+    },
+    "amd64_24gb": {
+      "architecture": "amd64",
+      "ram_total_gb": 24,
+      "ram_available_gb": 18,
+      "cpu_cores": "6-8",
+      "cpu_architecture": "x86-64",
+      "recommended_memory_limit_gb": 18,
+      "recommended_cpu_limit": 6,
+      "recommended_memory_reservation_gb": 12,
+      "use_cases": [
+        "Development workstations",
+        "Medium-scale production",
+        "Multi-model hosting"
+      ],
+      "notes": "Good balance for most workloads"
+    },
+    "amd64_32gb_plus": {
+      "architecture": "amd64",
+      "ram_total_gb": 32,
+      "ram_available_gb": 28,
+      "cpu_cores": "8-16",
+      "cpu_architecture": "x86-64",
+      "recommended_memory_limit_gb": 28,
+      "recommended_cpu_limit": 12,
+      "recommended_memory_reservation_gb": 20,
+      "use_cases": [
+        "High-performance production",
+        "Large-scale inference",
+        "Multiple concurrent capabilities",
+        "Heavy workloads"
+      ],
+      "notes": "Optimal for demanding applications"
+    }
+  },
+  "general_guidelines": {
+    "memory_overhead": "Always reserve 10-25% of total RAM for the OS and system processes",
+    "cpu_allocation": "Start with conservative CPU limits and increase based on monitoring",
+    "swap": "Avoid relying on swap for container workloads; ensure adequate physical RAM",
+    "monitoring": "Use 'podman stats' to monitor actual resource usage and adjust limits accordingly"
+  },
+  "architecture_comparison": {
+    "arm64_advantages": [
+      "Lower power consumption",
+      "Better for edge deployment",
+      "Cost-effective hardware",
+      "Compact form factor"
+    ],
+    "arm64_limitations": [
+      "Lower raw performance than AMD64",
+      "Limited RAM on consumer devices",
+      "Slower processing for heavy workloads"
+    ],
+    "amd64_advantages": [
+      "Higher raw performance",
+      "More RAM available",
+      "Better for development and testing",
+      "Faster for heavy workloads"
+    ],
+    "amd64_limitations": [
+      "Higher power consumption",
+      "Larger physical footprint",
+      "Higher cost",
+      "Less suitable for edge deployment"
+    ]
+  }
+}

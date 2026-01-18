@@ -1,0 +1,34 @@
+version: '3.8'
+
+# Configuration for AMD64 systems with 24GB RAM
+# Memory limit: 18GB (leaving 6GB for OS and other processes)
+# CPU cores: 6 (conservative allocation)
+
+services:
+  {{CAPABILITY_NAME}}:
+    image: {{CONTAINER_IMAGE}}
+    container_name: {{CAPABILITY_NAME}}-capability
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    volumes:
+      - {{CAPABILITY_NAME}}-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 18g
+          cpus: '6'
+        reservations:
+          memory: 12g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{PORT}}{{HEALTH_PATH}}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      # Moderate settings for 24GB AMD64 systems
+
+volumes:
+  {{CAPABILITY_NAME}}-data:
+    driver: local

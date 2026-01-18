@@ -1,0 +1,32 @@
+version: '3.8'
+
+# Optimized for Raspberry Pi 5 (16GB RAM)
+
+services:
+  {{CAPABILITY_NAME}}:
+    image: {{CONTAINER_IMAGE}}
+    container_name: {{CAPABILITY_NAME}}-capability
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    volumes:
+      - {{CAPABILITY_NAME}}-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 12g
+          cpus: '4'
+        reservations:
+          memory: 8g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{PORT}}{{HEALTH_PATH}}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      # Pi 5 can handle more parallel processing
+
+volumes:
+  {{CAPABILITY_NAME}}-data:
+    driver: local

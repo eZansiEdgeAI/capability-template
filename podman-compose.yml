@@ -1,0 +1,33 @@
+version: '3.8'
+
+# Default configuration optimized for Raspberry Pi 4/5 (ARM64)
+# For AMD64 systems, use: podman-compose -f podman-compose.amd64.yml up -d
+
+services:
+  {{CAPABILITY_NAME}}:
+    image: {{CONTAINER_IMAGE}}
+    container_name: {{CAPABILITY_NAME}}-capability
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    volumes:
+      - {{CAPABILITY_NAME}}-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 6g
+          cpus: '4'
+        reservations:
+          memory: 4g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{PORT}}{{HEALTH_PATH}}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      # Add capability-specific environment variables here
+
+volumes:
+  {{CAPABILITY_NAME}}-data:
+    driver: local

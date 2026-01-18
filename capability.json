@@ -1,0 +1,39 @@
+{
+  "name": "{{CAPABILITY_NAME}}",
+  "version": "1.0",
+  "type": "capability",
+  "description": "{{CAPABILITY_DESCRIPTION}}",
+  "provides": ["{{SERVICE_TYPE}}"],
+  "requires": [],
+  "target_platforms": [
+    "Raspberry Pi 4/5 (ARM64)",
+    "AMD64 Linux (24GB+)"
+  ],
+  "supported_architectures": ["arm64", "amd64"],
+  "resources": {
+    "ram_mb": {{RAM_MB}},
+    "cpu_cores": {{CPU_CORES}},
+    "storage_mb": {{STORAGE_MB}},
+    "accelerator": "none"
+  },
+  "endpoints": {
+    "health": {
+      "method": "GET",
+      "path": "{{HEALTH_PATH}}",
+      "input": "none",
+      "output": "application/json"
+    },
+    "main": {
+      "method": "POST",
+      "path": "{{MAIN_ENDPOINT_PATH}}",
+      "input": "application/json",
+      "output": "application/json"
+    }
+  },
+  "container": {
+    "image": "{{CONTAINER_IMAGE}}",
+    "port": {{PORT}},
+    "restart_policy": "unless-stopped"
+  },
+  "notes": "Replace all {{PLACEHOLDERS}} with actual values for your capability"
+}

@@ -1,0 +1,32 @@
+version: '3.8'
+
+# Default configuration for AMD64 (x86-64) systems with 24GB+ RAM
+
+services:
+  {{CAPABILITY_NAME}}:
+    image: {{CONTAINER_IMAGE}}
+    container_name: {{CAPABILITY_NAME}}-capability
+    ports:
+      - "{{PORT}}:{{PORT}}"
+    volumes:
+      - {{CAPABILITY_NAME}}-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 20g
+          cpus: '8'
+        reservations:
+          memory: 16g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{PORT}}{{HEALTH_PATH}}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      # AMD64 can handle higher throughput
+
+volumes:
+  {{CAPABILITY_NAME}}-data:
+    driver: local
