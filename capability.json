@@ -1,0 +1,43 @@
+{
+  "name": "{{CAPABILITY_NAME}}",
+  "version": "1.0",
+  "type": "capability",
+  "description": "{{CAPABILITY_DESCRIPTION}}",
+  "provides": ["{{SERVICE_TYPE}}"],
+  "requires": [],
+  "target_platforms": [
+    "Raspberry Pi 4/5 (ARM64)",
+    "AMD64 Linux (24GB+)"
+  ],
+  "supported_architectures": ["arm64", "amd64"],
+  "resources": {
+    "ram_mb": 4096,
+    "cpu_cores": 2,
+    "storage_mb": 10240,
+    "accelerator": "none",
+    "_comment": "Example values: ram_mb=4096 (4GB), cpu_cores=2, storage_mb=10240 (10GB)"
+  },
+  "endpoints": {
+    "health": {
+      "method": "GET",
+      "path": "/health",
+      "input": "none",
+      "output": "application/json",
+      "_comment": "Example: path=/health for simple health check"
+    },
+    "main": {
+      "method": "POST",
+      "path": "/api/process",
+      "input": "application/json",
+      "output": "application/json",
+      "_comment": "Example: path=/api/process for main capability endpoint"
+    }
+  },
+  "container": {
+    "image": "{{CONTAINER_IMAGE}}",
+    "port": 8080,
+    "restart_policy": "unless-stopped",
+    "_comment": "Example: image=myregistry/mycapability:latest, port=8080"
+  },
+  "notes": "This is a TEMPLATE with example values. Replace {{CAPABILITY_NAME}}, {{CAPABILITY_DESCRIPTION}}, {{SERVICE_TYPE}}, {{CONTAINER_IMAGE}}, and adjust numeric values as needed for your capability."
+}

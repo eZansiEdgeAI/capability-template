@@ -1,0 +1,39 @@
+version: '3.8'
+
+# Default configuration optimized for Raspberry Pi 4/5 (ARM64)
+# For AMD64 systems, use: podman-compose -f podman-compose.amd64.yml up -d
+#
+# TEMPLATE: Replace the following placeholders:
+#   - my-capability -> your capability name
+#   - myregistry/mycapability:latest -> your container image
+#   - 8080 -> your service port
+#   - /health -> your health endpoint path
+
+services:
+  my-capability:
+    image: myregistry/mycapability:latest
+    container_name: my-capability-capability
+    ports:
+      - "8080:8080"
+    volumes:
+      - my-capability-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 6g
+          cpus: '4'
+        reservations:
+          memory: 4g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      # Add capability-specific environment variables here
+
+volumes:
+  my-capability-data:
+    driver: local

@@ -1,0 +1,40 @@
+version: '3.8'
+
+# Conservative configuration for Raspberry Pi 4 (8GB RAM)
+# Memory limit: 5GB (leaving 3GB for OS and other processes)
+# CPU cores: 4 (all available on Pi 4)
+#
+# TEMPLATE: Replace the following placeholders:
+#   - my-capability -> your capability name
+#   - myregistry/mycapability:latest -> your container image
+#   - 8080 -> your service port
+#   - /health -> your health endpoint path
+
+services:
+  my-capability:
+    image: myregistry/mycapability:latest
+    container_name: my-capability-capability
+    ports:
+      - "8080:8080"
+    volumes:
+      - my-capability-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 5g
+          cpus: '4'
+        reservations:
+          memory: 3g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    environment:
+      # Conservative settings for Pi 4
+
+volumes:
+  my-capability-data:
+    driver: local

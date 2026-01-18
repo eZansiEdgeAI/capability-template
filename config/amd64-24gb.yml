@@ -1,0 +1,40 @@
+version: '3.8'
+
+# Configuration for AMD64 systems with 24GB RAM
+# Memory limit: 18GB (leaving 6GB for OS and other processes)
+# CPU cores: 6 (conservative allocation)
+#
+# TEMPLATE: Replace the following placeholders:
+#   - my-capability -> your capability name
+#   - myregistry/mycapability:latest -> your container image
+#   - 8080 -> your service port
+#   - /health -> your health endpoint path
+
+services:
+  my-capability:
+    image: myregistry/mycapability:latest
+    container_name: my-capability-capability
+    ports:
+      - "8080:8080"
+    volumes:
+      - my-capability-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 18g
+          cpus: '6'
+        reservations:
+          memory: 12g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    environment:
+      # Moderate settings for 24GB AMD64 systems
+
+volumes:
+  my-capability-data:
+    driver: local
