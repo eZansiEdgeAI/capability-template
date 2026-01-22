@@ -2,52 +2,71 @@
 
 ## Overview
 
-The capability contract is a JSON document (`capability.json`) that defines the interface, requirements, and metadata for an eZansiEdgeAI capability. It serves as the **single source of truth** for capability discovery, validation, and deployment.
+The capability contract is a JSON document (`capability.json`) that describes what a capability provides and how to call it.
+
+In practice, **Platform Core only requires a small subset** of fields for discovery and routing. This document describes:
+
+- the **minimum viable contract** (what Platform Core enforces today)
+- the **recommended contract** (what makes routing, docs, and teaching easier)
 
 ## Schema Version
 
 **Current Version:** 1.0
 
-## Complete Schema
+## Minimum viable schema (Platform Core)
+
+Platform Core currently enforces only:
+
+- `name` (string)
+- `version` (string)
+- `provides` (non-empty array of strings)
+
+Everything else is optional from Platform Core's point of view, but strongly recommended for a usable capability.
+
+Minimal example:
+
+```json
+{
+  "name": "my-capability",
+  "version": "1.0.0",
+  "provides": ["custom-service"],
+  "api": {
+    "endpoint": "http://localhost:8080",
+    "health_check": "/health"
+  }
+}
+```
+
+## Recommended schema
 
 ```json
 {
   "name": "string (required)",
   "version": "string (required)",
-  "type": "string (required, must be 'capability')",
-  "description": "string (required)",
+  "description": "string (recommended)",
   "provides": ["array of strings (required)"],
-  "requires": ["array of strings (optional)"],
-  "target_platforms": ["array of strings (required)"],
-  "supported_architectures": ["array of strings (required)"],
-  "resources": {
-    "ram_mb": "number (required)",
-    "cpu_cores": "number (required)",
-    "storage_mb": "number (required)",
-    "accelerator": "string (optional)"
+  "api": {
+    "endpoint": "string (recommended)",
+    "type": "string (optional)",
+    "health_check": "string (recommended)"
   },
   "endpoints": {
-    "health": {
-      "method": "string (required)",
-      "path": "string (required)",
-      "input": "string (required)",
-      "output": "string (required)"
-    },
-    "main": {
-      "method": "string (required)",
-      "path": "string (required)",
-      "input": "string (required)",
-      "output": "string (required)"
+    "<endpointName>": {
+      "method": "string (optional; defaults to POST)",
+      "path": "string (recommended)"
     }
   },
-  "container": {
-    "image": "string (required)",
-    "port": "number (required)",
-    "restart_policy": "string (required)"
-  },
+  "resources": { "object (optional)" },
+  "container": { "object (optional)" },
   "notes": "string (optional)"
 }
 ```
+
+Notes:
+
+- Platform Core ignores unknown fields, so you can include extra metadata (target platforms, architectures, etc.).
+- `api.endpoint` is required if you want Platform Core to actually route traffic to your capability.
+- `endpoints` enables **named endpoint routing** via `payload.endpoint` (preferred).
 
 ## Field Specifications
 
@@ -69,13 +88,13 @@ The capability contract is a JSON document (`capability.json`) that defines the 
 - **Description:** Capability version
 - **Notes:** Should follow [Semantic Versioning](https://semver.org/)
 
-#### `type` (required)
+#### `type` (optional)
 - **Type:** String
-- **Allowed Values:** `"capability"`
+- **Common Values:** `"capability"`
 - **Description:** Resource type identifier
-- **Notes:** Must be exactly `"capability"` for validation
+- **Notes:** Platform Core does not currently enforce this field.
 
-#### `description` (required)
+#### `description` (recommended)
 - **Type:** String
 - **Max Length:** 200 characters (recommended)
 - **Example:** `"LLM capability using Ollama for text generation and chat"`
@@ -85,7 +104,7 @@ The capability contract is a JSON document (`capability.json`) that defines the 
 #### `provides` (required)
 - **Type:** Array of strings
 - **Min Length:** 1
-- **Example:** `["llm", "chat", "completion"]`
+- **Example:** `["text-generation"]`, `["vector-search", "text-embeddings"]`
 - **Description:** Service types this capability provides
 - **Notes:** See [Standard Service Types](#standard-service-types) below
 
@@ -96,13 +115,13 @@ The capability contract is a JSON document (`capability.json`) that defines the 
 - **Description:** Other capabilities this one depends on
 - **Notes:** Used for dependency validation
 
-#### `target_platforms` (required)
+#### `target_platforms` (optional)
 - **Type:** Array of strings
 - **Example:** `["Raspberry Pi 4/5 (ARM64)", "AMD64 Linux (24GB+)"]`
 - **Description:** Human-readable target platforms
 - **Notes:** Informational, not validated
 
-#### `supported_architectures` (required)
+#### `supported_architectures` (optional)
 - **Type:** Array of strings
 - **Allowed Values:** `"arm64"`, `"amd64"`, `"arm"`, `"arm/v7"`, `"ppc64le"`, `"s390x"`
 - **Example:** `["arm64", "amd64"]`
@@ -111,7 +130,7 @@ The capability contract is a JSON document (`capability.json`) that defines the 
 
 ### Resources Section
 
-#### `resources` (required)
+#### `resources` (optional)
 Container resource requirements.
 
 ##### `resources.ram_mb` (required)
@@ -144,10 +163,12 @@ Container resource requirements.
 
 ### Endpoints Section
 
-#### `endpoints` (required)
+#### `endpoints` (recommended)
 API endpoint definitions.
 
-##### `endpoints.health` (required)
+Platform Core prefers routing by a **named endpoint** defined here, invoked via `payload.endpoint`.
+
+##### `endpoints.health` (recommended)
 Health check endpoint specification.
 
 - **`method`** (required): HTTP method, typically `"GET"`
@@ -175,8 +196,8 @@ Health check endpoint specification.
 }
 ```
 
-##### `endpoints.main` (required)
-Primary capability endpoint specification.
+##### `endpoints.main` (optional)
+Primary capability endpoint specification (a common convention).
 
 - **`method`** (required): HTTP method, typically `"POST"`
 - **`path`** (required): URL path, e.g., `"/api/generate"`
@@ -213,8 +234,34 @@ You can define additional endpoints beyond `health` and `main`:
 
 ### Container Section
 
-#### `container` (required)
+#### `container` (optional)
 Container deployment configuration.
+
+Platform Core does not require `container.*` fields for routing; they are primarily used for deployment/ops documentation.
+
+## Calling a capability via Platform Core (preferred)
+
+Platform Core routes requests using a single gateway endpoint (`POST /`). The preferred integration is:
+
+- choose a `type` from the contract's `provides`
+- choose a named `payload.endpoint` from the contract's `endpoints`
+- supply `payload.json` as the request body
+- optionally supply `payload.params` to fill path templates like `/collections/{collection}/query`
+
+Example:
+
+```json
+{
+  "type": "vector-search",
+  "payload": {
+    "endpoint": "query",
+    "params": {"collection": "demo"},
+    "json": {"query": "What is RAG?", "top_k": 3}
+  }
+}
+```
+
+`payload.path` exists only as a legacy fallback and should not be used in new capabilities.
 
 ##### `container.image` (required)
 - **Type:** String
@@ -245,16 +292,22 @@ The `provides` field should use standard service type identifiers when applicabl
 
 | Service Type | Description | Example Use Case |
 |--------------|-------------|------------------|
-| `llm` | Large Language Model | Text generation, chat |
+| `text-generation` | LLM text generation | Prompt → completion/chat |
 | `stt` | Speech-to-Text | Audio transcription |
 | `tts` | Text-to-Speech | Voice synthesis |
 | `vision` | Computer Vision | Image analysis, object detection |
 | `ocr` | Optical Character Recognition | Text extraction from images |
-| `embedding` | Text/Image Embeddings | Semantic search, similarity |
-| `retrieval` | Retrieval/Search | Vector search, RAG |
+| `text-embeddings` | Text embeddings | Semantic search, similarity |
+| `vector-search` | Vector search + retrieval | RAG retrieval (query over a collection) |
 | `classification` | Classification | Text/image categorization |
 | `translation` | Language Translation | Multi-language support |
 | `summarization` | Text Summarization | Document summarization |
+
+Notes:
+
+- Platform Core currently supports routing for `text-generation`, `vector-search`, and `text-embeddings`.
+- `embedding` is treated as a legacy alias for `text-embeddings` in Platform Core.
+- Older generic labels like `llm` / `retrieval` may exist in older docs, but new capabilities should prefer the names above.
 
 ### Supporting Services
 
@@ -277,10 +330,22 @@ If none of the standard types fit, use a descriptive custom type:
 
 ### Required Fields Validation
 
-All required fields must be present:
+Minimum required fields (as enforced by Platform Core):
 ```bash
 # Validate with jq
-jq -e '.name and .version and .type and .description and .provides and .supported_architectures and .resources and .endpoints and .container' capability.json
+jq -e '.name and .version and (.provides | length > 0)' capability.json
+```
+
+Recommended for gateway routing:
+
+```bash
+jq -e '.api.endpoint and .api.health_check' capability.json
+```
+
+Recommended for `payload.endpoint` routing:
+
+```bash
+jq -e '.endpoints and (.endpoints | type == "object")' capability.json
 ```
 
 ### Name Validation
@@ -307,11 +372,8 @@ jq -e '.container.port >= 1 and .container.port <= 65535' capability.json
 ### Endpoint Validation
 
 ```bash
-# Health endpoint must exist
-jq -e '.endpoints.health' capability.json
-
-# Main endpoint must exist
-jq -e '.endpoints.main' capability.json
+# If using named endpoint routing, ensure the endpoint exists and has a path
+jq -e '.endpoints.health.path' capability.json
 ```
 
 ## Multi-Architecture Fields

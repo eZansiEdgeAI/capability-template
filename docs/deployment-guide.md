@@ -43,6 +43,11 @@ curl --version
 jq --version
 ```
 
+Install note:
+
+- Prefer distro packages for `podman-compose` when available.
+- If your distro does not package it, use `pip3 install --user podman-compose`.
+
 ### Deployment Steps
 
 #### 1. Clone the Repository
@@ -125,6 +130,12 @@ podman-compose up -d
 
 # Verify deployment
 ./scripts/validate-deployment.sh
+
+Tip: on a true cold start (first run, or after cleaning images), include `--build` if your compose file builds a local image:
+
+```bash
+podman-compose up -d --build
+```
 ```
 
 #### 5. Validate
@@ -142,6 +153,19 @@ podman logs -f {{CAPABILITY_NAME}}-capability
 # Check resource usage
 podman stats --no-stream {{CAPABILITY_NAME}}-capability
 ```
+
+## Calling the capability via Platform Core (integration)
+
+Most stacks should call capabilities through **Platform Core**, not directly. Platform Core discovers capabilities from contracts and routes requests using a single gateway API.
+
+High level steps:
+
+1. Start your capability (this repo)
+2. Copy your `capability.json` into the platform-core `./capabilities/**/capability.json` folder
+3. Start platform-core (`podman-compose up -d --build`)
+4. Call `POST /` on `http://localhost:8000` using `payload.endpoint` (preferred)
+
+See the full cold-start walkthrough in [quickstart-manual-test.md](quickstart-manual-test.md).
 
 ### Advantages
 

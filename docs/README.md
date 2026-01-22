@@ -2,10 +2,21 @@
 
 Welcome to the eZansiEdgeAI Capability Template documentation.
 
+## Mental model (LEGO bricks)
+
+If you’re building capabilities for teaching/learning, think of eZansiEdgeAI like LEGO:
+
+- **Your capability = one brick**
+- **`capability.json` = the studs** (what the brick provides and how to call it)
+- **Platform Core = the baseplate** (one gateway that discovers bricks and routes requests)
+
+Start here: **[Quickstart Manual Test](quickstart-manual-test.md)** (cold start, then invoke via the gateway).
+
 ## 📚 Documentation Structure
 
 ### Getting Started
 - **[Main README](../README.md)** - Quick start guide and overview
+- **[Quickstart Manual Test](quickstart-manual-test.md)** - Cold-start checklist (standalone + via Platform Core gateway)
 - **[Deployment Guide](deployment-guide.md)** - General deployment strategies
 - **[AMD64 Deployment Guide](deployment-guide-amd64.md)** - AMD64-specific deployment
 

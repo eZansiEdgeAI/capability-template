@@ -1,10 +1,15 @@
 {
   "name": "{{CAPABILITY_NAME}}",
-  "version": "1.0",
+  "version": "1.0.0",
   "type": "capability",
   "description": "{{CAPABILITY_DESCRIPTION}}",
   "provides": ["{{SERVICE_TYPE}}"],
   "requires": [],
+  "api": {
+    "endpoint": "http://localhost:8080",
+    "type": "REST",
+    "health_check": "/health"
+  },
   "target_platforms": [
     "Raspberry Pi 4/5 (ARM64)",
     "AMD64 Linux (24GB+)"
@@ -22,15 +27,13 @@
       "method": "GET",
       "path": "/health",
       "input": "none",
-      "output": "application/json",
-      "_comment": "Example: path=/health for simple health check"
+      "output": "application/json"
     },
     "main": {
       "method": "POST",
       "path": "/api/process",
       "input": "application/json",
-      "output": "application/json",
-      "_comment": "Example: path=/api/process for main capability endpoint"
+      "output": "application/json"
     }
   },
   "container": {

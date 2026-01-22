@@ -5,6 +5,8 @@
 
 A complete, reusable template for creating multi-architecture eZansiEdgeAI capabilities that work seamlessly on both **ARM64** (Raspberry Pi) and **AMD64** (x86-64) platforms.
 
+This template is aimed at developers and contributors building new capability “LEGO bricks” that can be discovered and invoked via the eZansi Platform Core gateway.
+
 ## 🎯 Overview
 
 This template provides everything you need to build production-ready eZansiEdgeAI capabilities:
@@ -31,15 +33,22 @@ Edit `capability.json` and replace the template values:
   "name": "my-awesome-capability",
   "description": "My awesome capability that does amazing things",
   "provides": ["custom-service"],
+  "api": {
+    "endpoint": "http://localhost:8080",
+    "type": "REST",
+    "health_check": "/health"
+  },
   "container": {
     "image": "myregistry/my-capability:latest",
     "port": 8080
   },
   "endpoints": {
     "health": {
+      "method": "GET",
       "path": "/health"
     },
     "main": {
+      "method": "POST",
       "path": "/api/process"
     }
   }
@@ -79,6 +88,12 @@ Replace template values in the `podman-compose.yml` files:
 ./tests/test-performance.sh
 ```
 
+### 6. Manual cold-start (recommended)
+
+Once you’ve implemented your capability’s API, follow the end-to-end cold-start checklist:
+
+- [docs/quickstart-manual-test.md](docs/quickstart-manual-test.md)
+
 ## 📋 Resource Requirements
 
 | Platform | RAM | CPU | Storage | Use Case |
@@ -99,8 +114,11 @@ sudo apt update && sudo apt upgrade -y
 # Install Podman
 sudo apt install -y podman
 
-# Install podman-compose
-pip3 install podman-compose
+# Install podman-compose (prefer distro package)
+sudo apt install -y podman-compose || true
+
+# Fallback (if your distro doesn't package podman-compose)
+pip3 install --user podman-compose
 
 # Install utilities
 sudo apt install -y curl jq
@@ -111,12 +129,17 @@ sudo apt install -y curl jq
 ```bash
 # Ubuntu/Debian
 sudo apt update
-sudo apt install -y podman curl jq
-pip3 install podman-compose
+sudo apt install -y podman podman-compose curl jq || true
+
+# Fallback (if your distro doesn't package podman-compose)
+pip3 install --user podman-compose
 
 # Fedora/RHEL
 sudo dnf install -y podman curl jq
-pip3 install podman-compose
+sudo dnf install -y podman podman-compose curl jq || true
+
+# Fallback (if your distro doesn't package podman-compose)
+pip3 install --user podman-compose
 ```
 
 ## 📦 Deployment Options
