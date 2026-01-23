@@ -122,13 +122,13 @@ elif [[ -n "$COMPOSE_FILE_OVERRIDE" ]]; then
 elif [[ -n "$PROFILE" ]]; then
     case "$PROFILE" in
         pi5)
-            COMPOSE_FILE="podman-compose.pi5.yml"
+            COMPOSE_FILE="config/pi5-16gb.yml"
             ;;
         pi4)
             COMPOSE_FILE="config/pi4-8gb.yml"
             ;;
         amd64)
-            COMPOSE_FILE="podman-compose.amd64.yml"
+            COMPOSE_FILE="config/amd64-24gb.yml"
             ;;
         amd64-24gb)
             COMPOSE_FILE="config/amd64-24gb.yml"
@@ -148,10 +148,10 @@ else
     case "$ARCH" in
         aarch64|arm64)
             if [ $RAM_GB -ge 14 ]; then
-                COMPOSE_FILE="podman-compose.pi5.yml"
+                COMPOSE_FILE="config/pi5-16gb.yml"
                 echo -e "${GREEN}Detected: Raspberry Pi 5 (16GB)${NC}"
             elif [ $RAM_GB -ge 7 ]; then
-                COMPOSE_FILE="podman-compose.yml"
+                COMPOSE_FILE="config/pi4-8gb.yml"
                 echo -e "${GREEN}Detected: Raspberry Pi 4 (8GB)${NC}"
             else
                 COMPOSE_FILE="config/pi4-8gb.yml"
@@ -160,15 +160,14 @@ else
             ;;
         x86_64|amd64)
             if [ $RAM_GB -ge 30 ]; then
-                COMPOSE_FILE="podman-compose.amd64.yml"
+                COMPOSE_FILE="config/amd64-32gb.yml"
                 echo -e "${GREEN}Detected: AMD64 (32GB+)${NC}"
-                echo -e "${BLUE}Note: For even better performance, consider config/amd64-32gb.yml${NC}"
             elif [ $RAM_GB -ge 22 ]; then
-                COMPOSE_FILE="podman-compose.amd64.yml"
+                COMPOSE_FILE="config/amd64-24gb.yml"
                 echo -e "${GREEN}Detected: AMD64 (24GB)${NC}"
             else
-                COMPOSE_FILE="podman-compose.amd64.yml"
-                echo -e "${YELLOW}Detected: AMD64 with limited RAM (using default config)${NC}"
+                COMPOSE_FILE="config/amd64-24gb.yml"
+                echo -e "${YELLOW}Detected: AMD64 with limited RAM (using conservative config)${NC}"
             fi
             ;;
         *)

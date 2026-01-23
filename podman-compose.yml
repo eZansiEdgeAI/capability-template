@@ -1,7 +1,8 @@
 version: '3.8'
 
 # Default configuration optimized for Raspberry Pi 4/5 (ARM64)
-# For AMD64 systems, use: podman-compose -f podman-compose.amd64.yml up -d
+# For AMD64 systems, use: podman-compose -f config/amd64-24gb.yml up -d
+# Recommended (all devices): ./scripts/choose-compose.sh --run
 #
 # TEMPLATE: Replace the following placeholders:
 #   - my-capability -> your capability name

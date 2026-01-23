@@ -1,6 +1,8 @@
 version: '3.8'
 
-# Optimized for Raspberry Pi 5 (16GB RAM)
+# Configuration for Raspberry Pi 5 (16GB RAM)
+# Memory limit: 12GB (leaving 4GB for OS and other processes)
+# CPU cores: 4 (all available on Pi 5)
 #
 # TEMPLATE: Replace the following placeholders:
 #   - my-capability -> your capability name

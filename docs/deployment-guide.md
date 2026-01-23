@@ -100,20 +100,22 @@ vim capability.json
 
 **🍓 ARM64 (Raspberry Pi):**
 ```bash
-# For Pi 4 (8GB)
-cp config/pi4-8gb.yml podman-compose.yml
+# Recommended: let the selector pick the right preset
+./scripts/choose-compose.sh
 
-# For Pi 5 (16GB) - Recommended
-cp podman-compose.pi5.yml podman-compose.yml
+# Or run a specific preset directly (no copying)
+# - Pi 4 (8GB):  podman-compose -f ./config/pi4-8gb.yml up -d
+# - Pi 5 (16GB): podman-compose -f ./config/pi5-16gb.yml up -d
 ```
 
 **💻 AMD64:**
 ```bash
-# For systems with 24GB RAM
-cp config/amd64-24gb.yml podman-compose.yml
+# Recommended: let the selector pick the right preset
+./scripts/choose-compose.sh
 
-# For systems with 32GB+ RAM (Recommended)
-cp podman-compose.amd64.yml podman-compose.yml
+# Or run a specific preset directly:
+# - 24GB:  podman-compose -f ./config/amd64-24gb.yml up -d
+# - 32GB+: podman-compose -f ./config/amd64-32gb.yml up -d
 ```
 
 #### 4. Deploy
@@ -765,7 +767,7 @@ podman manifest inspect {{CONTAINER_IMAGE}}:latest | jq '.manifests[].platform'
 **Create configuration for source platform:**
 ```bash
 # On AMD64 (development)
-cat > podman-compose.amd64.yml <<EOF
+cat > config/amd64-24gb.yml <<EOF
 version: '3.8'
 services:
   {{CAPABILITY_NAME}}:
@@ -773,15 +775,15 @@ services:
     deploy:
       resources:
         limits:
-          memory: 20g
-          cpus: '8'
+          memory: 18g
+          cpus: '6'
 EOF
 ```
 
 **Create configuration for target platform:**
 ```bash
 # For ARM64 (production edge)
-cat > podman-compose.pi5.yml <<EOF
+cat > config/pi5-16gb.yml <<EOF
 version: '3.8'
 services:
   {{CAPABILITY_NAME}}:
@@ -800,7 +802,6 @@ EOF
 # Create deployment package
 tar -czf deployment-package.tar.gz \
   capability.json \
-  podman-compose.*.yml \
   config/ \
   scripts/
 
@@ -820,10 +821,10 @@ tar -xzf deployment-package.tar.gz
 
 # Or manually specify configuration
 # For Pi 5:
-podman-compose -f podman-compose.pi5.yml up -d
+podman-compose -f ./config/pi5-16gb.yml up -d
 
 # For AMD64:
-podman-compose -f podman-compose.amd64.yml up -d
+podman-compose -f ./config/amd64-24gb.yml up -d
 ```
 
 ### Migration Scenarios
@@ -851,7 +852,7 @@ podman volume create {{CAPABILITY_NAME}}-data
 podman volume import {{CAPABILITY_NAME}}-data < /tmp/capability-data.tar
 
 # 4. Deploy with Pi 5 configuration
-podman-compose -f podman-compose.pi5.yml up -d
+podman-compose -f ./config/pi5-16gb.yml up -d
 
 # 5. Validate
 ./scripts/validate-deployment.sh
@@ -941,14 +942,14 @@ podman-compose down
 podman volume export {{CAPABILITY_NAME}}-data > data.tar
 
 # 2. Transfer to ARM64
-scp data.tar podman-compose.pi5.yml user@pi5:/opt/{{CAPABILITY_NAME}}/
+scp data.tar config/pi5-16gb.yml user@pi5:/opt/{{CAPABILITY_NAME}}/
 
 # 3. On ARM64 - Deploy
 cd /opt/{{CAPABILITY_NAME}}
 podman volume create {{CAPABILITY_NAME}}-data
 podman volume import {{CAPABILITY_NAME}}-data < data.tar
 
-podman-compose -f podman-compose.pi5.yml up -d
+podman-compose -f ./config/pi5-16gb.yml up -d
 
 # 4. Monitor performance
 podman stats {{CAPABILITY_NAME}}-capability

@@ -171,7 +171,7 @@ podman port {{CAPABILITY_NAME}}-capability
 ### 💻 AMD64
 - Can handle higher concurrency
 - Monitor CPU usage with `htop`
-- Adjust resource limits in `podman-compose.amd64.yml`
+- Adjust resource limits in `config/amd64-24gb.yml` (or `config/amd64-32gb.yml`)
 - Consider using higher-spec config files
 
 ## Best Practices

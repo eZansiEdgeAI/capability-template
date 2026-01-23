@@ -70,8 +70,8 @@ Replace template values in the `podman-compose.yml` files:
 ./scripts/deploy.sh
 
 # Or specify a configuration
-./scripts/deploy.sh podman-compose.pi5.yml
-./scripts/deploy.sh podman-compose.amd64.yml
+./scripts/deploy.sh config/pi5-16gb.yml
+./scripts/deploy.sh config/amd64-24gb.yml
 ```
 
 ### 5. Validate
@@ -150,6 +150,13 @@ pip3 install --user podman-compose
 ./scripts/deploy.sh
 ```
 
+Or (recommended for parity with capability repos), use the preflight selector:
+
+```bash
+./scripts/choose-compose.sh
+./scripts/choose-compose.sh --run
+```
+
 The script will:
 - Detect your architecture (ARM64 or AMD64)
 - Check available RAM
@@ -163,13 +170,13 @@ The script will:
 podman-compose -f config/pi4-8gb.yml up -d
 
 # Raspberry Pi 5 (16GB)
-podman-compose -f podman-compose.pi5.yml up -d
+podman-compose -f config/pi5-16gb.yml up -d
 
 # AMD64 with 24GB RAM
 podman-compose -f config/amd64-24gb.yml up -d
 
 # AMD64 with 32GB+ RAM
-podman-compose -f podman-compose.amd64.yml up -d
+podman-compose -f config/amd64-32gb.yml up -d
 ```
 
 ### Option 3: Default Configurations
@@ -179,7 +186,7 @@ podman-compose -f podman-compose.amd64.yml up -d
 podman-compose up -d
 
 # AMD64
-podman-compose -f podman-compose.amd64.yml up -d
+podman-compose -f config/amd64-24gb.yml up -d
 ```
 
 ## 🏗️ Project Structure
@@ -188,17 +195,17 @@ podman-compose -f podman-compose.amd64.yml up -d
 capability-template/
 ├── capability.json              # Capability contract (CUSTOMIZE THIS)
 ├── podman-compose.yml           # Default ARM64 config (Pi 4/5)
-├── podman-compose.pi5.yml       # Pi 5 optimized (16GB)
-├── podman-compose.amd64.yml     # AMD64 default (24GB+)
 │
 ├── config/                      # Platform-specific configurations
 │   ├── pi4-8gb.yml             # Conservative Pi 4 config
+│   ├── pi5-16gb.yml            # Pi 5 optimized (16GB)
 │   ├── amd64-24gb.yml          # AMD64 with 24GB RAM
 │   ├── amd64-32gb.yml          # AMD64 with 32GB+ RAM
 │   └── device-constraints.json # Platform capabilities reference
 │
 ├── scripts/                     # Generic automation scripts
 │   ├── deploy.sh               # Multi-arch deployment with auto-detection
+│   ├── choose-compose.sh        # Preflight: recommends the right preset for your device
 │   ├── validate-deployment.sh  # Deployment validation
 │   └── health-check.sh         # Quick health verification
 │

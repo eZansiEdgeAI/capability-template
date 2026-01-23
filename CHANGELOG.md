@@ -17,8 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core configuration files:
   - `capability.json` - Generic capability contract with placeholders
   - `podman-compose.yml` - Default ARM64/Pi configuration
-  - `podman-compose.pi5.yml` - Pi 5 16GB optimized configuration
-  - `podman-compose.amd64.yml` - AMD64 default configuration
+  - `config/pi5-16gb.yml` - Pi 5 16GB optimized configuration
 - Device-specific configuration files:
   - `config/pi4-8gb.yml` - Conservative Raspberry Pi 4 configuration
   - `config/amd64-24gb.yml` - AMD64 with 24GB RAM
@@ -26,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `config/device-constraints.json` - Platform capabilities reference
 - Generic automation scripts:
   - `scripts/deploy.sh` - Multi-arch deployment with auto-detection
+  - `scripts/choose-compose.sh` - Preflight: recommends the right preset for your device
   - `scripts/validate-deployment.sh` - Deployment validation
   - `scripts/health-check.sh` - Quick health verification
 - Testing framework:
